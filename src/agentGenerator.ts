@@ -1,8 +1,8 @@
-import { brianTools } from "./tools/brianTools";
+import { askBrian, generateImage, summarizeText } from "./tools/brianTools";
 
 export async function generateAgent(prompt: string): Promise<string> {
     try {
-        const response = await brianTools.askBrian(prompt);
+        const response = await askBrian(prompt);
         return response;
     } catch (error) {
         console.error("Error generating response:", error);
@@ -10,10 +10,4 @@ export async function generateAgent(prompt: string): Promise<string> {
     }
 }
 
-export async function generateImage(prompt: string): Promise<string> {
-    return await brianTools.generateImage(prompt);
-}
-
-export async function summarizeText(text: string): Promise<string> {
-    return await brianTools.summarizeText(text);
-}
+export { generateImage, summarizeText };
