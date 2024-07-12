@@ -62,4 +62,9 @@ export const transactTool = new DynamicTool({
 	},
 });
 
-export const brianTools = [askBrianTool, extractTool, generateCodeTool, transactTool];
+export const brianTools = [
+	askBrianTool,
+	extractTool,
+	generateCodeTool,
+	transactTool,
+];
