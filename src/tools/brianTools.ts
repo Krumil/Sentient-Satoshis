@@ -82,33 +82,41 @@ export const transactTool = new DynamicStructuredTool({
 				address: address,
 			});
 
-			if (
-				transactionResponse.result &&
-				transactionResponse.result.data &&
-				transactionResponse.result.data.steps
-			) {
-				// Execute each step in the transaction
-				for (const step of transactionResponse.result.data.steps) {
-					const provider = new ethers.providers.JsonRpcProvider();
-					const wallet = new ethers.Wallet(privateKey, provider);
-					const tx = await wallet.sendTransaction({
-						to: step.to,
-						value: ethers.utils.parseEther(step.value),
-						data: step.data,
-						gasLimit: step.gasLimit,
-					});
-					await tx.wait();
+			let executionResults = [];
 
-					console.log(`Executed transaction step: ${JSON.stringify(step)}`);
+			for (const result of transactionResponse) {
+				console.log(`Processing action: ${result.action}`);
+				
+				if (result.data.steps) {
+					for (const step of result.data.steps) {
+						const provider = new ethers.providers.JsonRpcProvider();
+						const wallet = new ethers.Wallet(privateKey, provider);
+						const tx = await wallet.sendTransaction({
+							to: step.to,
+							value: ethers.utils.parseEther(step.value),
+							data: step.data,
+							chainId: step.chainId,
+						});
+						const receipt = await tx.wait();
+						
+						executionResults.push({
+							action: result.action,
+							step: step,
+							txHash: receipt.transactionHash,
+						});
+
+						console.log(`Executed transaction step: ${JSON.stringify(step)}`);
+					}
+				} else {
+					console.log(`No steps to execute for action: ${result.action}`);
 				}
-
-				return JSON.stringify({
-					message: "Transactions executed successfully",
-					details: transactionResponse.result.data,
-				});
-			} else {
-				throw new Error("Invalid transaction response structure");
 			}
+
+			return JSON.stringify({
+				message: "Transactions executed successfully",
+				details: transactionResponse,
+				executionResults: executionResults,
+			});
 		} catch (error) {
 			console.error("Error in transact:", error);
 			return "Sorry, I encountered an error while generating or executing transactions.";
