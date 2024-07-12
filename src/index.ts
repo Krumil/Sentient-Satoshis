@@ -9,10 +9,10 @@ app.use(express.json());
 app.post('/generate-agent', async (req, res) => {
   try {
     const { prompt } = req.body;
-    const agent = await generateAgent(prompt);
-    res.json({ agent });
+    const response = await generateAgent(prompt);
+    res.json({ response });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate agent' });
+    res.status(500).json({ error: 'Failed to generate response' });
   }
 });
 
