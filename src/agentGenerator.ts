@@ -1,4 +1,4 @@
-import { brianTools } from "./brianTools";
+import { brianTools } from "./tools/brianTools";
 
 export async function generateAgent(prompt: string): Promise<string> {
     try {
