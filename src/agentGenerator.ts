@@ -1,46 +1,39 @@
 import { z } from "zod";
 import { ChatAnthropic } from "@langchain/anthropic";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
-
-import { createToolCallingAgent } from "langchain/agents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import { brianTools } from "./tools/brianTools";
 import { navigateOnline } from "./tools/tavilyTools";
 
-const llm = new ChatAnthropic({
-	model: "claude-3-sonnet-20240229",
-	temperature: 0,
+const tools = [...brianTools, navigateOnline].map(tool => ({
+    name: tool.name,
+    description: tool.description,
+    input_schema: zodToJsonSchema(tool.schema),
+}));
+
+const model = new ChatAnthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    model: "claude-3-sonnet-20240229",
+    temperature: 0,
+}).bind({
+    tools: tools,
 });
 
 const prompt = ChatPromptTemplate.fromMessages([
-	["system", "You are a helpful assistant"],
-	["placeholder", "{chat_history}"],
-	["human", "{input}"],
-	["placeholder", "{agent_scratchpad}"],
+    ["system", "You are a helpful assistant with access to various tools. Use them when necessary."],
+    ["human", "{input}"],
 ]);
 
-const tools = [...brianTools, navigateOnline];
+const chain = prompt.pipe(model);
 
 export async function generateAgent(input: string): Promise<string> {
-	try {
-		const agent = await createToolCallingAgent({
-			llm,
-			tools,
-			prompt,
-		});
-
-		const agentExecutor = createReactAgent({
-			llm: llm,
-			tools: tools,
-		});
-
-		const { output } = await agentExecutor.invoke({ input });
-
-		return output;
-	} catch (error) {
-		console.error("Error generating agent response:", error);
-		return "Sorry, I encountered an error while processing your request.";
-	}
+    try {
+        const response = await chain.invoke({ input });
+        return JSON.stringify(response, null, 2);
+    } catch (error) {
+        console.error("Error generating agent response:", error);
+        return "Sorry, I encountered an error while processing your request.";
+    }
 }
 
 export { brianTools };
