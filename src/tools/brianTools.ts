@@ -14,7 +14,7 @@ export const askBrianTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const response = await brian.ask(prompt);
+			const response = await brian.ask({ prompt });
 			return JSON.stringify(response);
 		} catch (error) {
 			console.error("Error in askBrian:", error);
