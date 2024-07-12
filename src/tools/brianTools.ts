@@ -15,7 +15,7 @@ export const askBrianTool = new DynamicStructuredTool({
 	func: async ({ prompt }) => {
 		try {
 			const response = await brian.ask(prompt);
-			return response;
+			return JSON.stringify(response);
 		} catch (error) {
 			console.error("Error in askBrian:", error);
 			return "Sorry, I encountered an error while processing your request.";
@@ -51,7 +51,7 @@ export const generateCodeTool = new DynamicStructuredTool({
 	func: async ({ prompt }) => {
 		try {
 			const code = await brian.generateCode(prompt);
-			return code;
+			return JSON.stringify(code);
 		} catch (error) {
 			console.error("Error in generateCode:", error);
 			return "Sorry, I encountered an error while generating the smart contract.";
