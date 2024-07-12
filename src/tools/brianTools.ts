@@ -14,7 +14,10 @@ export const askBrianTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const response = await brian.ask({ prompt: prompt });
+			const response = await brian.ask({
+				prompt: prompt,
+				kb: "public-knowledge-box",
+			});
 			return JSON.stringify(response);
 		} catch (error) {
 			console.error("Error in askBrian:", error);
@@ -64,10 +67,16 @@ export const transactTool = new DynamicStructuredTool({
 	description: "Generate one or more transactions based on a prompt.",
 	schema: z.object({
 		prompt: z.string().describe("The prompt to generate transactions"),
+		address: z
+			.string()
+			.describe("Address of the user that will send the transaction"),
 	}),
-	func: async ({ prompt }) => {
+	func: async ({ prompt, address }) => {
 		try {
-			const transactions = await brian.transact({ prompt: prompt });
+			const transactions = await brian.transact({
+				prompt: prompt,
+				address: address,
+			});
 			return JSON.stringify(transactions);
 		} catch (error) {
 			console.error("Error in transact:", error);
