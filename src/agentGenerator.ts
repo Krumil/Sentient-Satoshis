@@ -18,18 +18,17 @@ const model = new ChatAnthropic({
 	tools: tools,
 });
 
-const prompt = ChatPromptTemplate.fromMessages([
-	[
-		"system",
-		"You are a helpful assistant with access to various tools. Use them when necessary.",
-	],
-	["human", "{input}"],
-]);
-
-const chain = prompt.pipe(model);
-
 export async function generateAgent(input: string): Promise<string> {
 	try {
+		const prompt = ChatPromptTemplate.fromMessages([
+			[
+				"system",
+				"You are a helpful assistant with access to various tools. Use them when necessary.",
+			],
+			["human", "{input}"],
+		]);
+
+		const chain = prompt.pipe(model);
 		const response = await chain.invoke({ input });
 		return JSON.stringify(response, null, 2);
 	} catch (error) {
