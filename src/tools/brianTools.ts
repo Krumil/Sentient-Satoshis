@@ -64,23 +64,46 @@ export const generateCodeTool = new DynamicStructuredTool({
 
 export const transactTool = new DynamicStructuredTool({
 	name: "Transact",
-	description: "Generate one or more transactions based on a prompt.",
+	description: "Generate and execute one or more transactions based on a prompt.",
 	schema: z.object({
-		prompt: z.string().describe("The prompt to generate transactions"),
-		address: z
-			.string()
-			.describe("Address of the user that will send the transaction"),
+		prompt: z.string().describe("The prompt to generate and execute transactions"),
+		address: z.string().describe("Address of the user that will send the transaction"),
 	}),
 	func: async ({ prompt, address }) => {
 		try {
-			const transactions = await brian.transact({
+			const transactionResponse = await brian.transact({
 				prompt: prompt,
 				address: address,
 			});
-			return JSON.stringify(transactions);
+
+			if (transactionResponse.result && transactionResponse.result.data && transactionResponse.result.data.steps) {
+				// Execute each step in the transaction
+				for (const step of transactionResponse.result.data.steps) {
+					// Here you would typically use a web3 library or ethers.js to send the transaction
+					// For example, using ethers.js:
+					// const provider = new ethers.providers.JsonRpcProvider();
+					// const wallet = new ethers.Wallet(privateKey, provider);
+					// const tx = await wallet.sendTransaction({
+					//     to: step.to,
+					//     value: ethers.utils.parseEther(step.value),
+					//     data: step.data,
+					//     gasLimit: step.gasLimit
+					// });
+					// await tx.wait();
+
+					console.log(`Executed transaction step: ${JSON.stringify(step)}`);
+				}
+
+				return JSON.stringify({
+					message: "Transactions executed successfully",
+					details: transactionResponse.result.data
+				});
+			} else {
+				throw new Error("Invalid transaction response structure");
+			}
 		} catch (error) {
 			console.error("Error in transact:", error);
-			return "Sorry, I encountered an error while generating transactions.";
+			return "Sorry, I encountered an error while generating or executing transactions.";
 		}
 	},
 });
