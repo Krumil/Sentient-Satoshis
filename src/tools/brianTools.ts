@@ -20,35 +20,46 @@ export const askBrianTool = new DynamicTool({
 	},
 });
 
-export const generateImageTool = new DynamicTool({
-	name: "GenerateImage",
-	description: "Generate an image based on a text prompt.",
+export const extractTool = new DynamicTool({
+	name: "ExtractParameters",
+	description: "Extract parameters from a given prompt.",
 	func: async (prompt: string) => {
 		try {
-			const image = await brian.generateImage(prompt);
-			return image.url;
+			const parameters = await brian.extract(prompt);
+			return JSON.stringify(parameters);
 		} catch (error) {
-			console.error("Error in generateImage:", error);
-			return "Sorry, I encountered an error while generating the image.";
+			console.error("Error in extractParameters:", error);
+			return "Sorry, I encountered an error while extracting parameters.";
 		}
 	},
 });
 
-export const summarizeTextTool = new DynamicStructuredTool({
-	name: "SummarizeText",
-	description: "Summarize a given text.",
-	schema: z.object({
-		text: z.string().describe("The text to summarize"),
-	}),
-	func: async ({ text }) => {
+export const generateCodeTool = new DynamicTool({
+	name: "GenerateCode",
+	description: "Generate a Solidity Smart Contract based on a prompt.",
+	func: async (prompt: string) => {
 		try {
-			const summary = await brian.summarize(text);
-			return summary;
+			const code = await brian.generateCode(prompt);
+			return code;
 		} catch (error) {
-			console.error("Error in summarizeText:", error);
-			return "Sorry, I encountered an error while summarizing the text.";
+			console.error("Error in generateCode:", error);
+			return "Sorry, I encountered an error while generating the smart contract.";
 		}
 	},
 });
 
-export const brianTools = [askBrianTool, generateImageTool, summarizeTextTool];
+export const transactTool = new DynamicTool({
+	name: "Transact",
+	description: "Generate one or more transactions based on a prompt.",
+	func: async (prompt: string) => {
+		try {
+			const transactions = await brian.transact(prompt);
+			return JSON.stringify(transactions);
+		} catch (error) {
+			console.error("Error in transact:", error);
+			return "Sorry, I encountered an error while generating transactions.";
+		}
+	},
+});
+
+export const brianTools = [askBrianTool, extractTool, generateCodeTool, transactTool];
