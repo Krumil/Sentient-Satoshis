@@ -7,6 +7,9 @@ const brian = new BrianSDK({
 	apiKey: process.env.BRIAN_API_KEY || "",
 });
 
+// Create a provider
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL || "http://localhost:8545");
+
 export const askBrianTool = new DynamicStructuredTool({
 	name: "AskBrian",
 	description: "Ask Brian AI a question and get a response.",
@@ -89,11 +92,10 @@ export const transactTool = new DynamicStructuredTool({
 
 				if (result.data.steps) {
 					for (const step of result.data.steps) {
-						const provider = new ethers.providers.JsonRpcProvider();
-						const wallet = new ethers.Wallet(privateKey, provider);
+						const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
 						const tx = await wallet.sendTransaction({
 							to: step.to,
-							value: ethers.utils.parseEther(step.value),
+							value: ethers.parseEther(step.value),
 							data: step.data,
 							chainId: step.chainId,
 						});
