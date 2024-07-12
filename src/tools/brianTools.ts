@@ -14,7 +14,7 @@ export const askBrianTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const response = await brian.ask({ prompt });
+			const response = await brian.ask({ prompt: prompt });
 			return JSON.stringify(response);
 		} catch (error) {
 			console.error("Error in askBrian:", error);
@@ -31,7 +31,7 @@ export const extractTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const parameters = await brian.extract(prompt);
+			const parameters = await brian.extract({ prompt: prompt });
 			return JSON.stringify(parameters);
 		} catch (error) {
 			console.error("Error in extractParameters:", error);
@@ -50,7 +50,7 @@ export const generateCodeTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const code = await brian.generateCode(prompt);
+			const code = await brian.generateCode({ prompt: prompt });
 			return JSON.stringify(code);
 		} catch (error) {
 			console.error("Error in generateCode:", error);
@@ -67,7 +67,7 @@ export const transactTool = new DynamicStructuredTool({
 	}),
 	func: async ({ prompt }) => {
 		try {
-			const transactions = await brian.transact(prompt);
+			const transactions = await brian.transact({ prompt: prompt });
 			return JSON.stringify(transactions);
 		} catch (error) {
 			console.error("Error in transact:", error);
