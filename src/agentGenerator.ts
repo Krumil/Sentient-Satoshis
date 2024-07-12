@@ -7,40 +7,40 @@ import { StateGraph, END, START } from "@langchain/langgraph";
 import { RunnableConfig } from "langchain/schema/runnable";
 
 interface PlanExecuteState {
-  input: string;
-  plan: string[];
-  pastSteps: [string, string][];
-  response?: string;
+	input: string;
+	plan: string[];
+	pastSteps: [string, string][];
+	response?: string;
 }
 
 const planExecuteState = {
-  input: {
-    value: (left?: string, right?: string) => right ?? left ?? "",
-  },
-  plan: {
-    value: (x?: string[], y?: string[]) => y ?? x ?? [],
-    default: () => [],
-  },
-  pastSteps: {
-    value: (x: [string, string][], y: [string, string][]) => x.concat(y),
-    default: () => [],
-  },
-  response: {
-    value: (x?: string, y?: string) => y ?? x,
-    default: () => undefined,
-  },
+	input: {
+		value: (left?: string, right?: string) => right ?? left ?? "",
+	},
+	plan: {
+		value: (x?: string[], y?: string[]) => y ?? x ?? [],
+		default: () => [],
+	},
+	pastSteps: {
+		value: (x: [string, string][], y: [string, string][]) => x.concat(y),
+		default: () => [],
+	},
+	response: {
+		value: (x?: string, y?: string) => y ?? x,
+		default: () => undefined,
+	},
 };
 
 const model = new OpenAI({ temperature: 0 });
 const tools = [new SerpAPI(), new Calculator()];
 
 const executor = await initializeAgentExecutorWithOptions(tools, model, {
-  agentType: "zero-shot-react-description",
-  verbose: true,
+	agentType: "zero-shot-react-description",
+	verbose: true,
 });
 
 const plannerPrompt = ChatPromptTemplate.fromTemplate(
-  `For the given objective, come up with a simple step by step plan. 
+	`For the given objective, come up with a simple step by step plan. 
   This plan should involve individual tasks, that if executed correctly will yield the correct answer. Do not add any superfluous steps. 
   The result of the final step should be the final answer. Make sure that each step has all the information needed - do not skip steps.
 
@@ -50,7 +50,7 @@ const plannerPrompt = ChatPromptTemplate.fromTemplate(
 const planner = plannerPrompt.pipe(model);
 
 const replannerPrompt = ChatPromptTemplate.fromTemplate(
-  `For the given objective, come up with a simple step by step plan. 
+	`For the given objective, come up with a simple step by step plan. 
   This plan should involve individual tasks, that if executed correctly will yield the correct answer. Do not add any superfluous steps.
   The result of the final step should be the final answer. Make sure that each step has all the information needed - do not skip steps.
 
@@ -71,79 +71,83 @@ const replannerPrompt = ChatPromptTemplate.fromTemplate(
 const replanner = replannerPrompt.pipe(model);
 
 async function executeStep(
-  state: PlanExecuteState,
-  config?: RunnableConfig
+	state: PlanExecuteState,
+	config?: RunnableConfig
 ): Promise<Partial<PlanExecuteState>> {
-  const task = state.plan[0];
-  const input = {
-    input: task,
-  };
-  const result = await executor.call(input, config);
+	const task = state.plan[0];
+	const input = {
+		input: task,
+	};
+	const result = await executor.call(input, config);
 
-  return {
-    pastSteps: [[task, result.output]],
-    plan: state.plan.slice(1),
-  };
+	return {
+		pastSteps: [[task, result.output]],
+		plan: state.plan.slice(1),
+	};
 }
 
 async function planStep(
-  state: PlanExecuteState
+	state: PlanExecuteState
 ): Promise<Partial<PlanExecuteState>> {
-  const plan = await planner.invoke({ objective: state.input });
-  return { plan: plan.content.split('\n').filter(step => step.trim() !== '') };
+	const plan = await planner.invoke({ objective: state.input });
+	return {
+		plan: plan.content.split("\n").filter((step) => step.trim() !== ""),
+	};
 }
 
 async function replanStep(
-  state: PlanExecuteState
+	state: PlanExecuteState
 ): Promise<Partial<PlanExecuteState>> {
-  const output = await replanner.invoke({
-    input: state.input,
-    plan: state.plan.join("\n"),
-    pastSteps: state.pastSteps
-      .map(([step, result]) => `${step}: ${result}`)
-      .join("\n"),
-  });
+	const output = await replanner.invoke({
+		input: state.input,
+		plan: state.plan.join("\n"),
+		pastSteps: state.pastSteps
+			.map(([step, result]) => `${step}: ${result}`)
+			.join("\n"),
+	});
 
-  const newPlan = output.content.split('\n').filter(step => step.trim() !== '');
+	const newPlan = output.content
+		.split("\n")
+		.filter((step) => step.trim() !== "");
 
-  if (newPlan.length === 0) {
-    return { response: output.content };
-  }
+	if (newPlan.length === 0) {
+		return { response: output.content };
+	}
 
-  return { plan: newPlan };
+	return { plan: newPlan };
 }
 
 function shouldEnd(state: PlanExecuteState) {
-  return state.response ? "true" : "false";
+	return state.response ? "true" : "false";
 }
 
 export async function generateAgent(prompt: string) {
-  const workflow = new StateGraph<PlanExecuteState>({
-    channels: planExecuteState,
-  })
-    .addNode("planner", planStep)
-    .addNode("agent", executeStep)
-    .addNode("replan", replanStep)
-    .addEdge(START, "planner")
-    .addEdge("planner", "agent")
-    .addEdge("agent", "replan")
-    .addConditionalEdges("replan", shouldEnd, {
-      true: END,
-      false: "agent",
-    });
+	const workflow = new StateGraph<PlanExecuteState>({
+		channels: planExecuteState,
+	})
+		.addNode("planner", planStep)
+		.addNode("agent", executeStep)
+		.addNode("replan", replanStep)
+		.addEdge(START, "planner")
+		.addEdge("planner", "agent")
+		.addEdge("agent", "replan")
+		.addConditionalEdges("replan", shouldEnd, {
+			true: END,
+			false: "agent",
+		});
 
-  const app = workflow.compile();
+	const app = workflow.compile();
 
-  const config = { recursionLimit: 50 };
-  const inputs = { input: prompt };
+	const config = { recursionLimit: 50 };
+	const inputs = { input: prompt };
 
-  let finalResponse = "";
+	let finalResponse = "";
 
-  for await (const event of await app.stream(inputs, config)) {
-    if (event.replan && event.replan.response) {
-      finalResponse = event.replan.response;
-    }
-  }
+	for await (const event of await app.stream(inputs, config)) {
+		if (event.replan && event.replan.response) {
+			finalResponse = event.replan.response;
+		}
+	}
 
-  return finalResponse;
+	return finalResponse;
 }
