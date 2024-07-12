@@ -86,7 +86,7 @@ export const transactTool = new DynamicStructuredTool({
 
 			for (const result of transactionResponse) {
 				console.log(`Processing action: ${result.action}`);
-				
+
 				if (result.data.steps) {
 					for (const step of result.data.steps) {
 						const provider = new ethers.providers.JsonRpcProvider();
@@ -98,7 +98,7 @@ export const transactTool = new DynamicStructuredTool({
 							chainId: step.chainId,
 						});
 						const receipt = await tx.wait();
-						
+
 						executionResults.push({
 							action: result.action,
 							step: step,
