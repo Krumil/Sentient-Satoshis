@@ -1,15 +1,18 @@
 import { BrianSDK } from "@brian-ai/sdk";
-import { DynamicTool, DynamicStructuredTool } from "@langchain/core/tools";
+import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 
 const brian = new BrianSDK({
 	apiKey: process.env.BRIAN_API_KEY || "",
 });
 
-export const askBrianTool = new DynamicTool({
+export const askBrianTool = new DynamicStructuredTool({
 	name: "AskBrian",
 	description: "Ask Brian AI a question and get a response.",
-	func: async (prompt: string) => {
+	schema: z.object({
+		prompt: z.string().describe("The question to ask Brian AI"),
+	}),
+	func: async ({ prompt }) => {
 		try {
 			const response = await brian.ask(prompt);
 			return response;
@@ -20,10 +23,13 @@ export const askBrianTool = new DynamicTool({
 	},
 });
 
-export const extractTool = new DynamicTool({
+export const extractTool = new DynamicStructuredTool({
 	name: "ExtractParameters",
 	description: "Extract parameters from a given prompt.",
-	func: async (prompt: string) => {
+	schema: z.object({
+		prompt: z.string().describe("The prompt to extract parameters from"),
+	}),
+	func: async ({ prompt }) => {
 		try {
 			const parameters = await brian.extract(prompt);
 			return JSON.stringify(parameters);
@@ -34,10 +40,15 @@ export const extractTool = new DynamicTool({
 	},
 });
 
-export const generateCodeTool = new DynamicTool({
+export const generateCodeTool = new DynamicStructuredTool({
 	name: "GenerateCode",
 	description: "Generate a Solidity Smart Contract based on a prompt.",
-	func: async (prompt: string) => {
+	schema: z.object({
+		prompt: z
+			.string()
+			.describe("The prompt to generate a Solidity Smart Contract"),
+	}),
+	func: async ({ prompt }) => {
 		try {
 			const code = await brian.generateCode(prompt);
 			return code;
@@ -48,10 +59,13 @@ export const generateCodeTool = new DynamicTool({
 	},
 });
 
-export const transactTool = new DynamicTool({
+export const transactTool = new DynamicStructuredTool({
 	name: "Transact",
 	description: "Generate one or more transactions based on a prompt.",
-	func: async (prompt: string) => {
+	schema: z.object({
+		prompt: z.string().describe("The prompt to generate transactions"),
+	}),
+	func: async ({ prompt }) => {
 		try {
 			const transactions = await brian.transact(prompt);
 			return JSON.stringify(transactions);
