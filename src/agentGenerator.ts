@@ -3,6 +3,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { brianTools } from "./tools/brianTools";
 import { tavilyTool } from "./tools/tavilyTools";
+import { storeAgent, getAgent } from "./agentStorage";
 
 const tools = [...brianTools, tavilyTool].map((tool) => ({
 	name: tool.name,
@@ -18,18 +19,46 @@ const model = new ChatAnthropic({
 	tools: tools,
 });
 
-export async function generateAgent(input: string): Promise<string> {
+export async function generateAgent(input: string, agentId?: string): Promise<string> {
 	try {
-		const prompt = ChatPromptTemplate.fromMessages([
-			["system", "{input}"],
-			["human", "Start trading on cthe crypto market."],
-		]);
+		let agent = agentId ? await getAgent(agentId) : null;
 
-		const chain = prompt.pipe(model);
-		const response = await chain.invoke({ input });
-		return JSON.stringify(response, null, 2);
+		if (!agent) {
+			const prompt = ChatPromptTemplate.fromMessages([
+				["system", "{input}"],
+				["human", "Start trading on the crypto market."],
+			]);
+
+			const chain = prompt.pipe(model);
+			const response = await chain.invoke({ input });
+			agent = JSON.stringify(response, null, 2);
+
+			// Store the newly created agent
+			if (!agentId) {
+				agentId = Date.now().toString(); // Simple ID generation
+			}
+			await storeAgent(agentId, agent);
+		}
+
+		return agent;
 	} catch (error) {
-		console.error("Error generating agent response:", error);
+		console.error("Error generating or retrieving agent:", error);
 		return "Sorry, I encountered an error while processing your request.";
+	}
+}
+
+export async function invokeAgent(agentId: string, input: string): Promise<string> {
+	try {
+		const agent = await getAgent(agentId);
+		if (!agent) {
+			throw new Error("Agent not found");
+		}
+
+		// Here you would typically use the stored agent to process the input
+		// For now, we'll just return the agent's stored state
+		return `Agent ${agentId} invoked with input: ${input}\nAgent state: ${agent}`;
+	} catch (error) {
+		console.error("Error invoking agent:", error);
+		return "Sorry, I encountered an error while invoking the agent.";
 	}
 }
