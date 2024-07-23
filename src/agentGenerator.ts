@@ -2,9 +2,9 @@ import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { brianTools } from "./tools/brianTools";
-import { navigateOnline } from "./tools/tavilyTools";
+import { tavilyTool } from "./tools/tavilyTools";
 
-const tools = [...brianTools, navigateOnline].map((tool) => ({
+const tools = [...brianTools, tavilyTool].map((tool) => ({
 	name: tool.name,
 	description: tool.description,
 	input_schema: zodToJsonSchema(tool.schema),
@@ -21,11 +21,8 @@ const model = new ChatAnthropic({
 export async function generateAgent(input: string): Promise<string> {
 	try {
 		const prompt = ChatPromptTemplate.fromMessages([
-			[
-				"system",
-				"You are a helpful assistant with access to various tools. Use them when necessary.",
-			],
-			["human", "{input}"],
+			["system", "{input}"],
+			["human", "Start trading on cthe crypto market."],
 		]);
 
 		const chain = prompt.pipe(model);
