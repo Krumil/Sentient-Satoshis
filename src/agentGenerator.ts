@@ -19,7 +19,10 @@ const model = new ChatAnthropic({
 });
 
 const prompt = ChatPromptTemplate.fromMessages([
-	["system", "You are an autonomous agent trading on the crypto market. Your goal is to make profitable trades. Analyze the market, make decisions, and execute trades."],
+	[
+		"system",
+		"You are an autonomous agent trading on the crypto market. Your goal is to make profitable trades. Analyze the market, make decisions, and execute trades.",
+	],
 	["human", "{input}"],
 ]);
 
@@ -27,7 +30,8 @@ const chain = prompt.pipe(model);
 
 export async function executeAgent(): Promise<string> {
 	try {
-		const input = "Analyze the current market conditions and make a trade decision.";
+		const input =
+			"Analyze the current market conditions and make a trade decision.";
 		const response = await chain.invoke({ input });
 		return JSON.stringify(response, null, 2);
 	} catch (error) {
@@ -41,6 +45,6 @@ export async function startAutonomousAgent(): Promise<void> {
 	while (true) {
 		const result = await executeAgent();
 		console.log("Agent execution result:", result);
-		await new Promise(resolve => setTimeout(resolve, 60000)); // Wait for 1 minute
+		await new Promise((resolve) => setTimeout(resolve, 60000)); // Wait for 1 minute
 	}
 }
