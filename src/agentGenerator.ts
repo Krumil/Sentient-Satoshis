@@ -33,9 +33,10 @@ async function readPromptFromFile(filename: string): Promise<string> {
 const chain = model;
 
 async function createPrompt(): Promise<ChatPromptTemplate> {
-	const systemPrompt = await readPromptFromFile("prompts/trading_decision.txt");
+	const tradingPrompt = await readPromptFromFile("prompts/trading_decision.txt");
+	const strangePersonalities = await readPromptFromFile("prompts/strange_personalities.txt");
 	return ChatPromptTemplate.fromMessages([
-		["system", systemPrompt],
+		["system", `${tradingPrompt}\n\nAdditionally, adopt one of these strange personalities for your responses:\n${strangePersonalities}`],
 		["human", "{input}"],
 	]);
 }
