@@ -1,21 +1,11 @@
-import express from "express";
-import { generateAgent } from "./agentGenerator";
+import { startAutonomousAgent } from "./agentGenerator";
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
-
-app.post("/generate-agent", async (req, res) => {
+async function main() {
 	try {
-		const { prompt } = req.body;
-		const response = await generateAgent(prompt);
-		res.json({ response });
+		await startAutonomousAgent();
 	} catch (error) {
-		res.status(500).json({ error: "Failed to generate response" });
+		console.error("Error in main function:", error);
 	}
-});
+}
 
-app.listen(port, () => {
-	console.log(`Server is running on port ${port}`);
-});
+main();
