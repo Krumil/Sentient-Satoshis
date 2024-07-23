@@ -30,18 +30,23 @@ async function readPromptFromFile(filename: string): Promise<string> {
 	}
 }
 
-const prompt = ChatPromptTemplate.fromMessages([
-	["system", readPromptFromFile("prompts/trading_decision.txt")],
-	["human", "{input}"],
-]);
+const chain = model;
 
-const chain = prompt.pipe(model);
+async function createPrompt(): Promise<ChatPromptTemplate> {
+	const systemPrompt = await readPromptFromFile("prompts/trading_decision.txt");
+	return ChatPromptTemplate.fromMessages([
+		["system", systemPrompt],
+		["human", "{input}"],
+	]);
+}
 
 export async function executeAgent(): Promise<string> {
 	try {
+		const prompt = await createPrompt();
+		const chainWithPrompt = prompt.pipe(chain);
 		const input =
 			"Analyze the current market conditions and make a trade decision.";
-		const response = await chain.invoke({ input });
+		const response = await chainWithPrompt.invoke({ input });
 		return JSON.stringify(response, null, 2);
 	} catch (error) {
 		console.error("Error executing agent:", error);
