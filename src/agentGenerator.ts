@@ -19,7 +19,10 @@ const model = new ChatAnthropic({
 	tools: tools,
 });
 
-export async function generateAgent(input: string, agentId?: string): Promise<string> {
+export async function generateAgent(
+	input: string,
+	agentId?: string
+): Promise<string> {
 	try {
 		let agent = agentId ? await getAgent(agentId) : null;
 
@@ -37,7 +40,7 @@ export async function generateAgent(input: string, agentId?: string): Promise<st
 			if (!agentId) {
 				agentId = Date.now().toString(); // Simple ID generation
 			}
-			await storeAgent(agentId, agent);
+			// await storeAgent(agentId, agent);
 		}
 
 		return agent;
@@ -47,7 +50,10 @@ export async function generateAgent(input: string, agentId?: string): Promise<st
 	}
 }
 
-export async function invokeAgent(agentId: string, input: string): Promise<string> {
+export async function invokeAgent(
+	agentId: string,
+	input: string
+): Promise<string> {
 	try {
 		const agent = await getAgent(agentId);
 		if (!agent) {
