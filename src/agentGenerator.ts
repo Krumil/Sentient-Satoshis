@@ -3,6 +3,8 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { brianTools } from "./tools/brianTools";
 import { tavilyTool } from "./tools/tavilyTools";
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 const tools = [...brianTools, tavilyTool].map((tool) => ({
 	name: tool.name,
@@ -18,17 +20,24 @@ const model = new ChatAnthropic({
 	tools: tools,
 });
 
-const prompt = ChatPromptTemplate.fromMessages([
-	[
-		"system",
-		"You are an autonomous agent trading on the crypto market. Your goal is to make profitable trades. Analyze the market, make decisions, and execute trades.",
-	],
-	["human", "{input}"],
-]);
+async function readPromptFromFile(filename: string): Promise<string> {
+    const filePath = path.join(__dirname, filename);
+    try {
+        return await fs.readFile(filePath, 'utf-8');
+    } catch (error) {
+        console.error(`Error reading prompt file: ${error}`);
+        throw error;
+    }
+}
 
-const chain = prompt.pipe(model);
+const chain = model;
 
 export async function executeAgent(): Promise<string> {
+    const promptText = await readPromptFromFile('prompt.txt');
+    const prompt = ChatPromptTemplate.fromMessages([
+        ["system", promptText],
+        ["human", "{input}"],
+    ]);
 	try {
 		const input =
 			"Analyze the current market conditions and make a trade decision.";
