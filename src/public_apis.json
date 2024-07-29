@@ -1,0 +1,142 @@
+{
+	"apis": [
+		{
+			"name": "Cat Facts",
+			"description": "Daily cat facts",
+			"url": "https://catfact.ninja/",
+			"category": "Animals"
+		},
+		{
+			"name": "Dog Facts",
+			"description": "Random dog facts",
+			"url": "http://dog-api.kinduff.com/api/facts",
+			"category": "Animals"
+		},
+		{
+			"name": "FishWatch",
+			"description": "Information about individual fish species",
+			"url": "https://www.fishwatch.gov/api",
+			"category": "Animals"
+		},
+		{
+			"name": "MeowFacts",
+			"description": "Get random cat facts",
+			"url": "https://meowfacts.herokuapp.com/",
+			"category": "Animals"
+		},
+		{
+			"name": "Zoo Animals",
+			"description": "Facts of zoo animals",
+			"url": "https://zoo-animal-api.herokuapp.com/",
+			"category": "Animals"
+		},
+		{
+			"name": "AnimeFacts",
+			"description": "Anime Facts (over 100+)",
+			"url": "https://anime-facts-rest-api.herokuapp.com/",
+			"category": "Anime"
+		},
+		{
+			"name": "Jikan",
+			"description": "Unofficial MyAnimeList API",
+			"url": "https://jikan.moe/",
+			"category": "Anime"
+		},
+		{
+			"name": "Studio Ghibli",
+			"description": "Resources from Studio Ghibli films",
+			"url": "https://ghibliapi.herokuapp.com/",
+			"category": "Anime"
+		},
+		{
+			"name": "Bacon Ipsum",
+			"description": "A Meatier Lorem Ipsum Generator",
+			"url": "https://baconipsum.com/json-api/",
+			"category": "Test Data"
+		},
+		{
+			"name": "FakeStoreAPI",
+			"description": "Fake store rest API for e-commerce prototypes",
+			"url": "https://fakestoreapi.com/",
+			"category": "Test Data"
+		},
+		{
+			"name": "ItsThisForThat",
+			"description": "Generate Random startup ideas",
+			"url": "http://itsthisforthat.com/api.php",
+			"category": "Test Data"
+		},
+		{
+			"name": "Metaphorsum",
+			"description": "Generate demo paragraphs",
+			"url": "http://metaphorpsum.com/",
+			"category": "Test Data"
+		},
+		{
+			"name": "Random Data",
+			"description": "Random data generator",
+			"url": "https://random-data-api.com/",
+			"category": "Test Data"
+		},
+		{
+			"name": "RandomUser",
+			"description": "Generates and list user data",
+			"url": "https://randomuser.me/",
+			"category": "Test Data"
+		},
+		{
+			"name": "UUID Generator",
+			"description": "Generate UUIDs",
+			"url": "https://www.uuidtools.com/api",
+			"category": "Test Data"
+		},
+		{
+			"name": "Yes No",
+			"description": "Generate yes or no randomly",
+			"url": "https://yesno.wtf/api",
+			"category": "Test Data"
+		},
+		{
+			"name": "Bored",
+			"description": "Find random activities to fight boredom",
+			"url": "https://www.boredapi.com/",
+			"category": "Development"
+		},
+		{
+			"name": "Forismatic",
+			"description": "Inspirational Quotes",
+			"url": "http://forismatic.com/en/api/",
+			"category": "Quotes"
+		},
+		{
+			"name": "icanhazdadjoke",
+			"description": "The largest selection of dad jokes",
+			"url": "https://icanhazdadjoke.com/api",
+			"category": "Entertainment"
+		},
+		{
+			"name": "kanye.rest",
+			"description": "REST API for random Kanye West quotes",
+			"url": "https://kanye.rest/",
+			"category": "Quotes"
+		},
+		{
+			"name": "quoteclear",
+			"description": "List of James Clear quotes from the 3-2-1 Newsletter",
+			"url": "https://quoteclear.web.app/",
+			"category": "Quotes"
+		},
+		{
+			"name": "Zen Quotes",
+			"description": "Large collection of Zen quotes for inspiration",
+			"url": "https://zenquotes.io/",
+			"category": "Quotes"
+		},
+		{
+			"name": "Fun Fact",
+			"description": "A simple HTTPS api that can randomly select and return a fact",
+			"url": "https://asli-fun-fact-api.herokuapp.com/",
+			"category": "Knowledge"
+		}
+	]
+}

@@ -1,0 +1,5 @@
+Consider those infos:
+
+- Base (rpcUrl: `https://base-mainnet.g.alchemy.com/v2/{{ALCHEMY_API_KEY}}`)
+- Your address: {{address}}
+- Today: {{today}}

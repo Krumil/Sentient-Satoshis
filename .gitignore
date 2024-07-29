@@ -1,0 +1,14 @@
+.aider*
+.env
+node_modules
+npm-debug.log
+
+# Logs
+logs
+
+# vscode
+.vscode
+
+# Build
+dist
+
