@@ -2,7 +2,9 @@
 
 This project implements an autonomous trading agent using LangChain and Anthropic's Claude AI model. The agent can perform various trading-related tasks and provide real-time updates through a server-sent events (SSE) stream.
 
-![Demo](./demo.gif)
+https://github.com/user-attachments/assets/9177d52a-b0fc-480c-9812-9e7862f94743
+
+)
 
 ## Features
 
