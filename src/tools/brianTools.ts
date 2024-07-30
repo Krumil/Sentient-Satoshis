@@ -265,7 +265,7 @@ export const transactTool = tool(
 
 export const brianTools = [
 	askBrianTool,
-	// extractTool,
-	// generateCodeTool,
+	extractTool,
+	generateCodeTool,
 	transactTool,
 ];
