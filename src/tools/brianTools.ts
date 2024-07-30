@@ -47,6 +47,9 @@ const transactSchema = z.object({
 	address: z
 		.string()
 		.describe("Address of the user that will send the transaction"),
+	chainId: z
+		.number()
+		.describe("Chain ID of the chain to execute the transaction on"),
 	providerUrl: z
 		.string()
 		.describe("Ethers provider URL for the specified chain"),
@@ -154,7 +157,7 @@ async function checkAndApproveToken(
 }
 
 export const transactTool = tool(
-	async ({ prompt, address, providerUrl }) => {
+	async ({ prompt, address, chainId, providerUrl }) => {
 		try {
 			console.log(
 				`Attempting to transact with prompt: "${prompt}" and address: ${address}`

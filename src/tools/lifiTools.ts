@@ -67,12 +67,13 @@ export const getTradableTokensTool = tool(
 					symbol,
 				}));
 
-			// Select 10 random tokens
 			const selectedTokens = tokensList
 				.sort(() => Math.random() - Math.random())
-				.slice(0, 10);
+				.slice(0, 5);
 
-			return JSON.stringify(selectedTokens, null, 4);
+			const famousTokens = tokensList.filter(token => token.symbol === "ETH" || token.symbol === "BRETT" || token.symbol === "PRIME");
+			const mergedTokens = [...selectedTokens, ...famousTokens];
+			return JSON.stringify(mergedTokens, null, 4);
 		} catch (error) {
 			if (error instanceof Error) {
 				throw new Error(`Failed to fetch tradable tokens: ${error.message}`);

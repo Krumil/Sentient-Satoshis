@@ -1,7 +1,6 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatAnthropic } from "@langchain/anthropic";
 import tools from "./tools.js";
-import { getAvailableApis } from "../tools/apiTools.js";
 import path from "path";
 import fs from "fs/promises";
 
@@ -25,10 +24,12 @@ async function createInfoMessage(): Promise<string> {
     infoPrompt = infoPrompt.replace("{{ALCHEMY_API_KEY}}", process.env.ALCHEMY_API_KEY ?? '');
 
     // get list of available apis
-    const availableApis = await getAvailableApis();
-    const apiPrompt = `Choose APIs to use from the following list:
-	${availableApis.map((api: { name: string; description: string }) => `- ${api.name}: ${api.description}`).join("\n")}`;
-    return `${infoPrompt}\n\n${apiPrompt}`;
+    // const availableApis = await getAvailableApis();
+    // const apiPrompt = `Choose APIs to use from the following list:
+    // ${availableApis.map((api: { name: string; description: string }) => `- ${api.name}: ${api.description}`).join("\n")}`;
+    // return `${infoPrompt}\n\n${apiPrompt}`;
+
+    return infoPrompt;
 }
 
 
